@@ -8,10 +8,22 @@
 import UIKit
 
 class TableViewController: UITableViewController {
-    var toDos : [ToDo] = []
+    
+    var toDos : [ToDoCD] = []
+    override func viewWillAppear(_ animated: Bool) {
+      getToDos()
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
-        toDos = createToDos()
+    }
+    func getToDos(){
+        if let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext {
+            if let coreDataToDos = try? context.fetch(ToDoCD.fetchRequest()) as? [ToDoCD] {
+                    //if let theToDos = coreDataToDos {
+                        toDos = coreDataToDos
+                        tableView.reloadData()
+                }
+          }
     }
     func createToDos() -> [ToDo] {
 
@@ -30,7 +42,7 @@ class TableViewController: UITableViewController {
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
-        return 0
+        return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -38,29 +50,38 @@ class TableViewController: UITableViewController {
         return toDos.count
     }
 
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+
+      // this gives us a single ToDo
+      let toDo = toDos[indexPath.row]
+
+      performSegue(withIdentifier: "moveToComplete", sender: toDo)
+    }
    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
         let toDo = toDos[indexPath.row]
         
+        if let name = toDo.name{
         if toDo.unsafe {
-            cell.textLabel?.text = "⚠️" + toDo.name
-          } else {
+            cell.textLabel?.text = "⚠️" + name
+          } else if false{
             cell.textLabel?.text = toDo.name
           }
-        if toDo.safeButStrange {
-            cell.textLabel?.text = "😳🥴" + toDo.name
-          } else {
+
+        else if toDo.safeButStrange {
+            cell.textLabel?.text = "😳🥴" + name
+          } else if false {
             cell.textLabel?.text = toDo.name
           }
-        if toDo.humorous{
-            cell.textLabel?.text = "⚠️" + toDo.name
-          } else {
+        else if toDo.humorous{
+            cell.textLabel?.text = "😹" + name
+          } else if false {
             cell.textLabel?.text = toDo.name
           }
+        }
         return cell
     }
-  
 
     /*
     // Override to support conditional editing of the table view.
@@ -97,14 +118,23 @@ class TableViewController: UITableViewController {
     }
     */
 
-    /*
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let addVC = segue.destination as? AddEventViewController {
+            addVC.previousVC = self
+        }
+        if let completeVC = segue.destination as? DeleteViewController {
+           if let toDo = sender as? ToDoCD {
+             completeVC.selectedToDo = toDo
+             completeVC.previousVC = self
+           }
+         }
         // Get the new view controller using segue.destination.
         // Pass the selected object to the new view controller.
     }
-    */
+    
 
 }
