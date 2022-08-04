@@ -65,24 +65,35 @@ class TableViewController: UITableViewController {
         if let name = toDo.name{
         if toDo.unsafe {
             cell.textLabel?.text = "⚠️" + name
+            cell.textLabel?.textColor = UIColor.white
           } else if false{
             cell.textLabel?.text = toDo.name
           }
 
         else if toDo.safeButStrange {
             cell.textLabel?.text = "😳🥴" + name
+            cell.textLabel?.textColor = UIColor.white
           } else if false {
             cell.textLabel?.text = toDo.name
           }
         else if toDo.humorous{
             cell.textLabel?.text = "😹" + name
+            cell.textLabel?.textColor = UIColor.white
           } else if false {
             cell.textLabel?.text = toDo.name
           }
         }
         return cell
     }
-
+    override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        //view.tintColor = UIColor.red
+        let header = view as! UITableViewHeaderFooterView
+        header.textLabel?.textColor = UIColor.white
+    }
+//    override func tableView(tableView: UITableView!, viewForHeaderInSection section: Int) -> UIView!{
+//        var customView: UIView?
+//        customView.frame = customView?.
+//    }
     /*
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
